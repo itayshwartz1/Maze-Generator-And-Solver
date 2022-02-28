@@ -69,6 +69,15 @@ public class Maze {
     public void recursiveBacktrack(GUI gui) {
         biuoop.Sleeper sleeper = new biuoop.Sleeper();
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
+        while (!keyboardSensor.isPressed("enter")){
+            DrawSurface drawSurface = gui.getDrawSurface();
+            drawMaze(drawSurface);
+            drawSurface.drawText(275, 85, "To start press Enter", 50);
+            gui.show(drawSurface);
+            sleeper.sleepFor(100);
+        }
+        //to separate the enters
+        sleeper.sleepFor(300);
         boolean skipDrawing = false;
 
         ArrayList<Cell> stack = new ArrayList<>();
