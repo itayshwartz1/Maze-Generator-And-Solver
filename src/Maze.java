@@ -1,8 +1,6 @@
 import biuoop.DrawSurface;
 import biuoop.GUI;
 import biuoop.KeyboardSensor;
-import biuoop.Sleeper;
-
 import java.awt.*;
 import java.util.*;
 
@@ -53,11 +51,9 @@ public class Maze {
 
     /**
      * This method draw the maze on drawSurface.
-     *
-     * @param d - DrawSurface
-     */
-    public void drawMaze(DrawSurface d) {
-        biuoop.Sleeper sleeper = new biuoop.Sleeper();
+     **/
+    public void drawMaze(GUI gui, int x, int y, String string, int fontSize) {
+        DrawSurface d = gui.getDrawSurface();
         d.setColor(background);
         //draw the cells, and only after the walls - to prevent drawing cells on top the walls/
         d.fillRectangle(0, 0, Global.screenWidth, Global.screenHeight);
@@ -71,17 +67,16 @@ public class Maze {
                 array[i][j].drawCellWalls(d);
             }
         }
-
+        d.drawText(x,y,string,fontSize);
+        gui.show(d);
+        sleepFor(10);
     }
 
-    private void sleepFor(int millisecond){
-        Sleeper sleeper = new Sleeper();
-        sleeper.sleepFor(millisecond);
-    }
+    private void sleepFor(long millisecond){Global.sleeper.sleepFor(millisecond);}
 
     /**
      * This method build the maze - remove random walls.
-     * <p>
+     *
      * This algorithm, also known as the "recursive backtracker" algorithm, is a randomized version of the
      * depth-first search algorithm.
      * Frequently implemented with a stack, this approach is one of the simplest ways to generate a maze using a
@@ -95,19 +90,13 @@ public class Maze {
      * the computer to backtrack all the way back to the beginning cell. We can be sure every cell is visited.
      */
     public void recursiveBacktrack(GUI gui) {
-        biuoop.Sleeper sleeper = new biuoop.Sleeper();
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
 
         while (!keyboardSensor.isPressed("enter")) {
-            DrawSurface drawSurface = gui.getDrawSurface();
-            drawMaze(drawSurface);
-            drawSurface.drawText(275, 85, "To start press enter" , 50);
-            gui.show(drawSurface);
-            sleeper.sleepFor(100);
-
+            drawMaze(gui, 275, 85, "To start press enter" , 50);
         }
         //to separate the enters
-        sleeper.sleepFor(300);
+        sleepFor(300);
         boolean skipDrawing = false;
 
         ArrayList<Cell> stack = new ArrayList<>();
@@ -124,14 +113,11 @@ public class Maze {
             current.color = Color.MAGENTA;
 
             if (!skipDrawing) {
-                DrawSurface drawSurface = gui.getDrawSurface();
-                drawMaze(drawSurface);
-                drawSurface.drawText(275, 85, "To start press enter" , 50);
-                gui.show(drawSurface);
+                drawMaze(gui, 275, 85, "To start press enter" , 50);
                 long usedTime = System.currentTimeMillis() - startTime;
                 long milliSecondLeftToSleep = 40 - usedTime;
                 if (milliSecondLeftToSleep > 0) {
-                    sleepFor((int) milliSecondLeftToSleep);
+                    sleepFor(milliSecondLeftToSleep);
                 }
             }
             current.color = realColor;
@@ -159,8 +145,8 @@ public class Maze {
     /**
      * This method remove the walls between two neighbors cells.
      *
-     * @param current
-     * @param next
+     * @param current .
+     * @param next .
      */
     public void removeWalls(Cell current, Cell next) {
         int x = current.i - next.i;
@@ -186,22 +172,18 @@ public class Maze {
     /**
      * This method set the start of the maze.
      *
-     * @param gui
+     * @param gui .
      */
     public void setStart(GUI gui) {
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
-        biuoop.Sleeper sleeper = new biuoop.Sleeper();
         // sleep for a little time to separate the enters.
-        sleeper.sleepFor(300);
+        sleepFor(300);
 
         while (true) {
             //we make sure that we won't color the end in different color.
             finish.color = Color.RED;
             long startTime = System.currentTimeMillis();
-            DrawSurface drawSurface = gui.getDrawSurface();
-            drawMaze(drawSurface);
-            drawSurface.drawText(75, 85, "To skip press enter" , 40);
-            gui.show(drawSurface);
+            drawMaze(gui, 75, 85, "To skip press enter" , 40);
 
             if (keyboardSensor.isPressed("up") && start.j > 0) {
                 start.color = Color.white;
@@ -228,9 +210,9 @@ public class Maze {
             }
 
             long usedTime = System.currentTimeMillis() - startTime;
-            long milliSecondLeftToSleep = 45 - usedTime;
+            long milliSecondLeftToSleep = 40 - usedTime;
             if (milliSecondLeftToSleep > 0) {
-                sleeper.sleepFor(milliSecondLeftToSleep);
+                sleepFor(milliSecondLeftToSleep);
             }
         }
     }
@@ -244,18 +226,13 @@ public class Maze {
      */
     public void setEnd(GUI gui) {
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
-        biuoop.Sleeper sleeper = new biuoop.Sleeper();
-        sleeper.sleepFor(500);
+        sleepFor(300);
         while (true) {
             // make sure that we won't color the start of the maze.
             start.color = Color.GREEN;
 
             long startTime = System.currentTimeMillis();
-            DrawSurface drawSurface = gui.getDrawSurface();
-            drawMaze(drawSurface);
-            drawSurface.drawText(75, 85, "Use the arrows to change the finishing position", 40);
-            gui.show(drawSurface);
-
+            drawMaze(gui, 75, 85, "Use the arrows to change the finishing position", 40 );
             if (keyboardSensor.isPressed("up") && finish.j > 0) {
                 finish.color = Color.white;
                 finish = array[finish.i][finish.j - 1];
@@ -281,9 +258,9 @@ public class Maze {
             }
 
             long usedTime = System.currentTimeMillis() - startTime;
-            long milliSecondLeftToSleep = 45 - usedTime;
+            long milliSecondLeftToSleep = 40 - usedTime;
             if (milliSecondLeftToSleep > 0) {
-                sleeper.sleepFor(milliSecondLeftToSleep);
+                sleepFor(milliSecondLeftToSleep);
             }
         }
     }
@@ -296,9 +273,8 @@ public class Maze {
      */
     public void solveBFS(GUI gui) {
         resetMaze();
-        biuoop.Sleeper sleeper = new biuoop.Sleeper();
         // sleep to separate the enters
-        sleeper.sleepFor(300);
+        sleepFor(300);
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
 
         LinkedList<Cell> queue = new LinkedList<>();
@@ -344,14 +320,11 @@ public class Maze {
             }
 
             if (!skip) {
-                DrawSurface drawSurface = gui.getDrawSurface();
-                drawMaze(drawSurface);
-                drawSurface.drawText(320, 85, "To skip press enter", 40);
-                gui.show(drawSurface);
+                drawMaze(gui, 320, 85, "To skip press enter", 40);
                 long usedTime = System.currentTimeMillis() - startTime;
-                long milliSecondLeftToSleep = 10 - usedTime;
+                long milliSecondLeftToSleep = 20 - usedTime;
                 if (milliSecondLeftToSleep > 0) {
-                    sleeper.sleepFor(milliSecondLeftToSleep);
+                    sleepFor(milliSecondLeftToSleep);
                 }
             }
         }
@@ -360,9 +333,8 @@ public class Maze {
 
     public void solveDFS(GUI gui) {
         resetMaze();
-        biuoop.Sleeper sleeper = new biuoop.Sleeper();
         // sleep to separate the enters
-        sleeper.sleepFor(300);
+        sleepFor(300);
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
         boolean skip = false;
         Cell current = start;
@@ -395,14 +367,11 @@ public class Maze {
 
 
             if (!skip) {
-                DrawSurface drawSurface = gui.getDrawSurface();
-                drawMaze(drawSurface);
-                drawSurface.drawText(320, 85, "To skip press enter", 40);
-                gui.show(drawSurface);
+                drawMaze(gui, 320, 85, "To skip press enter", 40);
                 long usedTime = System.currentTimeMillis() - startTime;
-                long milliSecondLeftToSleep = 10 - usedTime;
+                long milliSecondLeftToSleep = 40 - usedTime;
                 if (milliSecondLeftToSleep > 0) {
-                    sleeper.sleepFor(milliSecondLeftToSleep);
+                    sleepFor(milliSecondLeftToSleep);
                 }
             }
         }
@@ -411,9 +380,8 @@ public class Maze {
 
     public void solveAStar(GUI gui) {
         resetMaze();
-        biuoop.Sleeper sleeper = new biuoop.Sleeper();
         // sleep to separate the enters
-        sleeper.sleepFor(300);
+        sleepFor(300);
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
         boolean skip = false;
 
@@ -464,14 +432,11 @@ public class Maze {
                     }
                 }
                 if (!skip) {
-                    DrawSurface drawSurface = gui.getDrawSurface();
-                    drawMaze(drawSurface);
-                    drawSurface.drawText(320, 85, "To skip press enter", 40);
-                    gui.show(drawSurface);
+                    drawMaze(gui, 320, 85, "To skip press enter", 40);
                     long usedTime = System.currentTimeMillis() - startTime;
-                    long milliSecondLeftToSleep = 10 - usedTime;
+                    long milliSecondLeftToSleep = 40 - usedTime;
                     if (milliSecondLeftToSleep > 0) {
-                        sleeper.sleepFor(milliSecondLeftToSleep);
+                        sleepFor(milliSecondLeftToSleep);
                     }
                 }
             }
@@ -504,11 +469,10 @@ public class Maze {
      */
     private void RecoverPath(GUI gui) {
         Cell current = finish;
-        biuoop.Sleeper sleeper = new biuoop.Sleeper();
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
 
         // sleep to separate the enters
-        sleeper.sleepFor(300);
+        sleepFor(300);
         boolean skip = false;
 
         while (current != start) {
@@ -519,27 +483,20 @@ public class Maze {
 
             if (!skip) {
                 long startTime = System.currentTimeMillis();
-                DrawSurface drawSurface = gui.getDrawSurface();
-                drawMaze(drawSurface);
-                drawSurface.drawText(320, 85, "To skip press enter", 40);
-
-                gui.show(drawSurface);
+                drawMaze(gui, 320, 85, "To skip press enter", 40);
                 long usedTime = System.currentTimeMillis() - startTime;
                 long milliSecondLeftToSleep = 40 - usedTime;
                 if (milliSecondLeftToSleep > 0) {
-                    sleeper.sleepFor(milliSecondLeftToSleep);
+                    sleepFor(milliSecondLeftToSleep);
                 }
             }
             current = current.father;
         }
         // sleep to separate the enters.
-        sleeper.sleepFor(300);
-        DrawSurface drawSurface = gui.getDrawSurface();
-        drawMaze(drawSurface);
-        drawSurface.drawText(320, 85, "To exit press enter", 40);
-        gui.show(drawSurface);
+        sleepFor(300);
+        drawMaze(gui, 320, 85, "To exit press enter", 40);
         while (!keyboardSensor.isPressed("enter")) {
-            sleeper.sleepFor(100);
+            sleepFor(100);
         }
     }
 }

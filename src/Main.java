@@ -1,6 +1,7 @@
 import biuoop.DrawSurface;
 import biuoop.GUI;
-
+import biuoop.KeyboardSensor;
+import biuoop.Sleeper;
 
 
 // global variables
@@ -11,7 +12,7 @@ class Global {
     public static int screenWidth = 1040;
     public static int screenHeight = 800;
     public static boolean shouldPrintAnything = true;
-
+    public static Sleeper sleeper = new Sleeper();
     public static Cell current;
 }
 
@@ -19,13 +20,14 @@ class Global {
 public class Main {
     public static void main(String[] args) {
         GUI gui = new GUI("maze solver", Global.screenWidth, Global.screenHeight);
-
         float numDFS = 0, numBFS = 0, numAStar = 0;
         int numberOfRuns = 1;
         for(int i = 0; i < numberOfRuns; i++) {
 
             Maze maze = new Maze();
             maze.recursiveBacktrack(gui);
+            maze.setStart(gui);
+            maze.setEnd(gui);
 
             maze.solveDFS(gui);
             numDFS += (float) maze.howManyVisited() / numberOfRuns;
