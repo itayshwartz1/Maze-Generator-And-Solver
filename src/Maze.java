@@ -1,21 +1,18 @@
 import biuoop.DrawSurface;
 import biuoop.GUI;
 import biuoop.KeyboardSensor;
+import biuoop.Sleeper;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
 
 public class Maze {
     Cell[][] array = new Cell[Global.rows][Global.cols];
     Cell start;
     Cell finish;
-
     Color background = new Color(255, 220, 199);
 
-    /**
-     * The constructor of Maze.
-     */
+
     Maze() {
         // fill array with Cells.
         for (int i = 0; i < Global.rows; i++) {
@@ -30,12 +27,37 @@ public class Maze {
         finish.color = Color.RED;
     }
 
+    public void resetMaze() {
+        for (int i = 0; i < Global.rows; i++) {
+            for (int j = 0; j < Global.cols; j++) {
+                if (array[i][j] != start && array[i][j] != finish) {
+                    array[i][j].visited = false;
+                    array[i][j].color = Color.white;
+                }
+            }
+        }
+    }
+
+
+    public int howManyVisited() {
+        int result = 0;
+        for (int i = 0; i < Global.rows; i++) {
+            for (int j = 0; j < Global.cols; j++) {
+                if (array[i][j].visited)
+                    result++;
+            }
+        }
+        return result;
+    }
+
+
     /**
      * This method draw the maze on drawSurface.
      *
      * @param d - DrawSurface
      */
     public void drawMaze(DrawSurface d) {
+        biuoop.Sleeper sleeper = new biuoop.Sleeper();
         d.setColor(background);
         //draw the cells, and only after the walls - to prevent drawing cells on top the walls/
         d.fillRectangle(0, 0, Global.screenWidth, Global.screenHeight);
@@ -49,6 +71,12 @@ public class Maze {
                 array[i][j].drawCellWalls(d);
             }
         }
+
+    }
+
+    private void sleepFor(int millisecond){
+        Sleeper sleeper = new Sleeper();
+        sleeper.sleepFor(millisecond);
     }
 
     /**
@@ -69,15 +97,14 @@ public class Maze {
     public void recursiveBacktrack(GUI gui) {
         biuoop.Sleeper sleeper = new biuoop.Sleeper();
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
-        while (!keyboardSensor.isPressed("enter")){
+
+        while (!keyboardSensor.isPressed("enter")) {
             DrawSurface drawSurface = gui.getDrawSurface();
             drawMaze(drawSurface);
-            drawSurface.drawText(275, 85, "To start press Enter", 50);
-            gui.show(drawSurface);
-            sleeper.sleepFor(100);
-        }
+            drawSurface.drawText(275, 85, "To start press enter" , 50);
+            gui.show(drawSurface);        }
         //to separate the enters
-        sleeper.sleepFor(300);
+        sleepFor(300);
         boolean skipDrawing = false;
 
         ArrayList<Cell> stack = new ArrayList<>();
@@ -93,20 +120,19 @@ public class Maze {
             Color realColor = current.color;
             current.color = Color.MAGENTA;
 
-
             if (!skipDrawing) {
                 DrawSurface drawSurface = gui.getDrawSurface();
                 drawMaze(drawSurface);
-                drawSurface.drawText(275, 85, "To skip press Enter", 50);
+                drawSurface.drawText(275, 85, "To start press enter" , 50);
                 gui.show(drawSurface);
                 long usedTime = System.currentTimeMillis() - startTime;
                 long milliSecondLeftToSleep = 40 - usedTime;
                 if (milliSecondLeftToSleep > 0) {
-                    sleeper.sleepFor(milliSecondLeftToSleep);
+                    sleepFor((int) milliSecondLeftToSleep);
                 }
             }
             current.color = realColor;
-            Cell next = stack.get(stack.size() - 1).getRandomUnvisitedNeighbor(array);
+            Cell next = stack.get(stack.size() - 1).getRandomNeighborWallsDontMatters(array);
 
 
             // if the current cell (on th top of the stack) have unvisited neighbors.
@@ -169,10 +195,9 @@ public class Maze {
             //we make sure that we won't color the end in different color.
             finish.color = Color.RED;
             long startTime = System.currentTimeMillis();
-
             DrawSurface drawSurface = gui.getDrawSurface();
             drawMaze(drawSurface);
-            drawSurface.drawText(75, 85, "Use the arrows to change the starting position", 40);
+            drawSurface.drawText(75, 85, "To skip press enter" , 40);
             gui.show(drawSurface);
 
             if (keyboardSensor.isPressed("up") && start.j > 0) {
@@ -267,6 +292,7 @@ public class Maze {
      * @param - gui
      */
     public void solveBFS(GUI gui) {
+        resetMaze();
         biuoop.Sleeper sleeper = new biuoop.Sleeper();
         // sleep to separate the enters
         sleeper.sleepFor(300);
@@ -275,15 +301,11 @@ public class Maze {
         LinkedList<Cell> queue = new LinkedList<>();
         queue.add(start);
         boolean skip = false;
-
         while (queue.size() != 0) {
             if (keyboardSensor.isPressed("enter")) {
                 skip = true;
             }
-
-
             long startTime = System.currentTimeMillis();
-
             Cell current = queue.poll();
             current.visited = true;
 
@@ -332,6 +354,145 @@ public class Maze {
         }
     }
 
+
+    public void solveDFS(GUI gui) {
+        resetMaze();
+        biuoop.Sleeper sleeper = new biuoop.Sleeper();
+        // sleep to separate the enters
+        sleeper.sleepFor(300);
+        KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
+        boolean skip = false;
+        Cell current = start;
+
+        Cell newNeighbor = null;
+
+
+        while (current != finish) {
+
+            current.visited = true;
+            current.color = Color.YELLOW;
+            long startTime = System.currentTimeMillis();
+            if (keyboardSensor.isPressed("enter")) {
+                skip = true;
+            }
+            //the algorithm:
+            newNeighbor = current.getRandomNeighbor(array);
+            // if there is no neighbors
+            if (newNeighbor == null) {
+                if (current.father == null) {
+                    int i = 0;
+                    break;
+                }
+                current = current.father;
+
+            } else {
+                newNeighbor.father = current;
+                current = newNeighbor;
+            }
+
+
+            if (!skip) {
+                DrawSurface drawSurface = gui.getDrawSurface();
+                drawMaze(drawSurface);
+                drawSurface.drawText(320, 85, "To skip press enter", 40);
+                gui.show(drawSurface);
+                long usedTime = System.currentTimeMillis() - startTime;
+                long milliSecondLeftToSleep = 10 - usedTime;
+                if (milliSecondLeftToSleep > 0) {
+                    sleeper.sleepFor(milliSecondLeftToSleep);
+                }
+            }
+        }
+        RecoverPath(gui);
+    }
+
+    public void solveAStar(GUI gui) {
+        resetMaze();
+        biuoop.Sleeper sleeper = new biuoop.Sleeper();
+        // sleep to separate the enters
+        sleeper.sleepFor(300);
+        KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
+        boolean skip = false;
+
+
+        PriorityQueue<Cell> closedList = new PriorityQueue<>();
+        PriorityQueue<Cell> openList = new PriorityQueue<>();
+
+        start.f = start.g + (int) start.calculateHeuristic(finish);
+        openList.add(start);
+
+        while (!openList.isEmpty()) {
+            Cell current = openList.peek();
+
+            current.visited = true;
+            current.color = Color.YELLOW;
+
+            long startTime = System.currentTimeMillis();
+            if (keyboardSensor.isPressed("enter")) {
+                skip = true;
+            }
+
+            if (current == finish) {
+                RecoverPath(gui);
+                return;
+            }
+
+            ArrayList<Cell> neighbors = createNeighbors(current);
+
+
+            for (Cell cell : neighbors) {
+                double totalWeight = current.g + 1;
+
+                if (!openList.contains(cell) && !closedList.contains(cell)) {
+                    cell.father = current;
+                    cell.g = totalWeight;
+                    cell.f = cell.g + cell.calculateHeuristic(finish);
+                    openList.add(cell);
+                } else {
+                    if (totalWeight < cell.g) {
+                        cell.father = current;
+                        cell.g = totalWeight;
+                        cell.f = cell.g + cell.calculateHeuristic(finish);
+
+                        if (closedList.contains(cell)) {
+                            closedList.remove(cell);
+                            openList.add(cell);
+                        }
+                    }
+                }
+                if (!skip) {
+                    DrawSurface drawSurface = gui.getDrawSurface();
+                    drawMaze(drawSurface);
+                    drawSurface.drawText(320, 85, "To skip press enter", 40);
+                    gui.show(drawSurface);
+                    long usedTime = System.currentTimeMillis() - startTime;
+                    long milliSecondLeftToSleep = 10 - usedTime;
+                    if (milliSecondLeftToSleep > 0) {
+                        sleeper.sleepFor(milliSecondLeftToSleep);
+                    }
+                }
+            }
+
+            openList.remove(current);
+            closedList.add(current);
+        }
+    }
+
+    private ArrayList<Cell> createNeighbors(Cell current) {
+        ArrayList<Cell> arrayList = new ArrayList();
+        if (!current.upWall)
+            arrayList.add(array[current.i][current.j - 1]);
+        if (!current.downWall)
+            arrayList.add(array[current.i][current.j + 1]);
+        if (!current.leftWall)
+            arrayList.add(array[current.i - 1][current.j]);
+        if (!current.rightWall)
+            arrayList.add(array[current.i + 1][current.j]);
+        Collections.shuffle(arrayList);
+        return arrayList;
+    }
+
+
     /**
      * This method recover the path from the end to the start.
      * it go from the end to his father and on until it reach to the start.
@@ -367,7 +528,6 @@ public class Maze {
                 }
             }
             current = current.father;
-
         }
         // sleep to separate the enters.
         sleeper.sleepFor(300);

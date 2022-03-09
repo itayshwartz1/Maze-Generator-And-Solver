@@ -4,7 +4,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Cell {
+public class Cell implements Comparable<Cell> {
     int i;
     int j;
 
@@ -22,6 +22,9 @@ public class Cell {
 
     boolean visited = false;
     Cell father;
+
+    double g = Double.MAX_VALUE;
+    double f = Double.MAX_VALUE;
 
     /**
      * This is the constructor of the Cell object.
@@ -94,7 +97,7 @@ public class Cell {
      * @param array
      * @return - random neighbors.
      */
-    public Cell getRandomUnvisitedNeighbor(Cell[][] array) {
+    public Cell getRandomNeighborWallsDontMatters(Cell[][] array) {
         ArrayList<Cell> neighbors = new ArrayList<Cell>();
 
         if (isIndexValid(i, j - 1) && !array[i][j - 1].visited) {
@@ -120,5 +123,44 @@ public class Cell {
             return neighbors.get(r);
         }
         return null;
+    }
+
+    public Cell getRandomNeighbor(Cell[][] array) {
+        ArrayList<Cell> neighbors = new ArrayList<Cell>();
+
+        if (isIndexValid(i, j - 1) && !array[i][j - 1].visited && !upWall) {
+            neighbors.add(array[i][j - 1]);
+        }
+
+        if (isIndexValid(i, j + 1) && !array[i][j + 1].visited && !downWall) {
+            neighbors.add(array[i][j + 1]);
+        }
+
+        if (isIndexValid(i - 1, j) && !array[i - 1][j].visited && !leftWall) {
+            neighbors.add(array[i - 1][j]);
+        }
+
+        if (isIndexValid(i + 1, j) && !array[i + 1][j].visited && !rightWall) {
+            neighbors.add(array[i + 1][j]);
+        }
+
+        // pick one neighbors.
+        if (neighbors.size() > 0) {
+            Random random = new Random();
+            int r = random.nextInt(neighbors.size());
+            return neighbors.get(r);
+        }
+        return null;
+    }
+
+    public double calculateHeuristic(Cell target) {
+        return Math.sqrt(Math.pow(this.i - target.i,2) + Math.pow(this.j - target.j,2));
+    }
+
+
+    //need for the Astar search...
+    @Override
+    public int compareTo(Cell n) {
+        return Double.compare(this.f, n.f);
     }
 }
