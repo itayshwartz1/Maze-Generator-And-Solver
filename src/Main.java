@@ -3,13 +3,16 @@ import biuoop.GUI;
 import biuoop.KeyboardSensor;
 import biuoop.Sleeper;
 
+import java.sql.Array;
+import java.util.Random;
+
 
 // global variables
 class Global {
-    public static int rows = 48;
-    public static int cols = 32;
-    public static int sizeOfCell = 20;
-    public static int screenWidth = 1040;
+    public static int rows = 96;
+    public static int cols = 64;
+    public static int sizeOfCell = 10;
+    public static int screenWidth = 1000;
     public static int screenHeight = 800;
     public static boolean shouldPrintAnything = true;
     public static Sleeper sleeper = new Sleeper();
@@ -20,25 +23,45 @@ class Global {
 public class Main {
     public static void main(String[] args) {
         GUI gui = new GUI("maze solver", Global.screenWidth, Global.screenHeight);
-        float numDFS = 0, numBFS = 0, numAStar = 0;
+
+//        Maze maze = new Maze();
+//        maze.recursiveBacktrack(gui);
+//        maze.setStart(gui);
+//        maze.setEnd(gui);
+//
+//        maze.solveDFS(gui);
+//        maze.solveBFS(gui);
+//        maze.solveAStar(gui);
+//        maze.shouldPrintMaze(false);
+
+
+        //for statistics
         int numberOfRuns = 1;
-        for(int i = 0; i < numberOfRuns; i++) {
 
-            Maze maze = new Maze();
-            maze.recursiveBacktrack(gui);
-            maze.setStart(gui);
-            maze.setEnd(gui);
 
-            maze.solveDFS(gui);
-            numDFS += (float) maze.howManyVisited() / numberOfRuns;
-            maze.solveBFS(gui);
-            numBFS += (float) maze.howManyVisited() / numberOfRuns;
-            maze.solveAStar(gui);
-            numAStar += (float) maze.howManyVisited() / numberOfRuns;
+        float[] pathLength = new float[numberOfRuns];
+        float[] pointDistance = new float[numberOfRuns];
+        float[] DFSVisit = new float[numberOfRuns];
+        float[] BFSVisit = new float[numberOfRuns];
+        float[] AStarVisit = new float[numberOfRuns];
+
+        Random random = new Random();
+        for (int i = 0; i < numberOfRuns; i++) {
+            Maze m = new Maze();
+            m.shouldPrintMaze(false);
+            m.recursiveBacktrack(gui);
+            //m.setStartFromPoint(random.nextInt(Global.rows), random.nextInt(Global.cols));
+            //m.setEndFromPoint(random.nextInt(Global.rows), random.nextInt(Global.cols));
+
+            m.solveDFS(gui);
+            DFSVisit[i] = m.howManyVisited();
+            m.solveBFS(gui);
+            BFSVisit[i] = m.howManyVisited();
+            m.solveAStar(gui);
+            AStarVisit[i] = m.howManyVisited();
+            pathLength[i] = m.pathLength();
+            pointDistance[i] = m.distanceFromStartToEnd();
         }
-        System.out.println(numDFS);
-        System.out.println(numBFS);
-        System.out.println(numAStar);
 
         gui.close();
 

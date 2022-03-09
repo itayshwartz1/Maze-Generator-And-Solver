@@ -9,6 +9,7 @@ public class Maze {
     Cell start;
     Cell finish;
     Color background = new Color(255, 220, 199);
+    private Boolean shouldPrint = true;
 
 
     Maze() {
@@ -36,6 +37,14 @@ public class Maze {
         }
     }
 
+    public void shouldPrintMaze(Boolean b){
+        this.shouldPrint = b;
+    }
+
+    public float distanceFromStartToEnd(){
+        return (float) Math.sqrt(Math.pow(start.i - finish.i, 2) + Math.pow(start.j - finish.j,2));
+    }
+
 
     public int howManyVisited() {
         int result = 0;
@@ -48,11 +57,25 @@ public class Maze {
         return result;
     }
 
+    public int pathLength(){
+        int result =0;
+        for (int i = 0; i < Global.rows; i++) {
+            for (int j = 0; j < Global.cols; j++) {
+                if (array[i][j].color == Color.MAGENTA || array[i][j] == start || array[i][j] == finish)
+                    result++;
+            }
+        }
+        return result;
+    }
+
 
     /**
      * This method draw the maze on drawSurface.
      **/
     public void drawMaze(GUI gui, int x, int y, String string, int fontSize) {
+        if (!shouldPrint)
+            return;
+
         DrawSurface d = gui.getDrawSurface();
         d.setColor(background);
         //draw the cells, and only after the walls - to prevent drawing cells on top the walls/
@@ -72,7 +95,11 @@ public class Maze {
         sleepFor(10);
     }
 
-    private void sleepFor(long millisecond){Global.sleeper.sleepFor(millisecond);}
+    private void sleepFor(long millisecond){
+        if (!shouldPrint)
+            return;
+        Global.sleeper.sleepFor(millisecond);
+    }
 
     /**
      * This method build the maze - remove random walls.
@@ -92,7 +119,7 @@ public class Maze {
     public void recursiveBacktrack(GUI gui) {
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
 
-        while (!keyboardSensor.isPressed("enter")) {
+        while (!keyboardSensor.isPressed("enter") && shouldPrint) {
             drawMaze(gui, 275, 85, "To start press enter" , 50);
         }
         //to separate the enters
@@ -115,7 +142,7 @@ public class Maze {
             if (!skipDrawing) {
                 drawMaze(gui, 275, 85, "To start press enter" , 50);
                 long usedTime = System.currentTimeMillis() - startTime;
-                long milliSecondLeftToSleep = 40 - usedTime;
+                long milliSecondLeftToSleep = 45 - usedTime;
                 if (milliSecondLeftToSleep > 0) {
                     sleepFor(milliSecondLeftToSleep);
                 }
@@ -169,12 +196,30 @@ public class Maze {
         }
     }
 
+    public void setStartFromPoint(int i, int j){
+        if( i < 0 || i > Global.rows - 1 || j < 0 || j > Global.cols -1)
+            return;
+        start.color = Color.white;
+        start = array[i][j];
+        start.color = Color.GREEN;
+    }
+
+    public void setEndFromPoint(int i, int j){
+        if( i < 0 || i > Global.rows - 1 || j < 0 || j > Global.cols -1)
+            return;
+        finish.color = Color.white;
+        finish = array[i][j];
+        finish.color = Color.RED;
+    }
+
     /**
      * This method set the start of the maze.
      *
      * @param gui .
      */
     public void setStart(GUI gui) {
+        if(!shouldPrint)
+            return;
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
         // sleep for a little time to separate the enters.
         sleepFor(300);
@@ -183,7 +228,7 @@ public class Maze {
             //we make sure that we won't color the end in different color.
             finish.color = Color.RED;
             long startTime = System.currentTimeMillis();
-            drawMaze(gui, 75, 85, "To skip press enter" , 40);
+            drawMaze(gui, 75, 85, "Use the arrows to change the starting position", 40 );
 
             if (keyboardSensor.isPressed("up") && start.j > 0) {
                 start.color = Color.white;
@@ -225,6 +270,8 @@ public class Maze {
      * @param gui
      */
     public void setEnd(GUI gui) {
+        if(!shouldPrint)
+            return;
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
         sleepFor(300);
         while (true) {
@@ -290,7 +337,7 @@ public class Maze {
 
             // if we find the exit we recover the path from the end to the start.
             if (current == finish) {
-                RecoverPath(gui);
+                recoverPath(gui);
                 return;
             }
 
@@ -320,7 +367,7 @@ public class Maze {
             }
 
             if (!skip) {
-                drawMaze(gui, 320, 85, "To skip press enter", 40);
+                drawMaze(gui, 280, 85, "BFS: To skip press enter", 40);
                 long usedTime = System.currentTimeMillis() - startTime;
                 long milliSecondLeftToSleep = 20 - usedTime;
                 if (milliSecondLeftToSleep > 0) {
@@ -338,11 +385,10 @@ public class Maze {
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
         boolean skip = false;
         Cell current = start;
-
         Cell newNeighbor = null;
 
-
         while (current != finish) {
+            start.color = Color.GREEN;
 
             current.visited = true;
             current.color = Color.YELLOW;
@@ -367,15 +413,15 @@ public class Maze {
 
 
             if (!skip) {
-                drawMaze(gui, 320, 85, "To skip press enter", 40);
+                drawMaze(gui, 280, 85, "DFS: To skip press enter", 40);
                 long usedTime = System.currentTimeMillis() - startTime;
-                long milliSecondLeftToSleep = 40 - usedTime;
+                long milliSecondLeftToSleep = 30 - usedTime;
                 if (milliSecondLeftToSleep > 0) {
                     sleepFor(milliSecondLeftToSleep);
                 }
             }
         }
-        RecoverPath(gui);
+        recoverPath(gui);
     }
 
     public void solveAStar(GUI gui) {
@@ -393,6 +439,7 @@ public class Maze {
         openList.add(start);
 
         while (!openList.isEmpty()) {
+            start.color = Color.GREEN;
             Cell current = openList.peek();
 
             current.visited = true;
@@ -404,7 +451,7 @@ public class Maze {
             }
 
             if (current == finish) {
-                RecoverPath(gui);
+                recoverPath(gui);
                 return;
             }
 
@@ -432,7 +479,7 @@ public class Maze {
                     }
                 }
                 if (!skip) {
-                    drawMaze(gui, 320, 85, "To skip press enter", 40);
+                    drawMaze(gui, 300, 85, "A*: To skip press enter", 40);
                     long usedTime = System.currentTimeMillis() - startTime;
                     long milliSecondLeftToSleep = 40 - usedTime;
                     if (milliSecondLeftToSleep > 0) {
@@ -467,7 +514,7 @@ public class Maze {
      *
      * @param gui
      */
-    private void RecoverPath(GUI gui) {
+    private void recoverPath(GUI gui) {
         Cell current = finish;
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
 
@@ -476,6 +523,8 @@ public class Maze {
         boolean skip = false;
 
         while (current != start) {
+            start.color = Color.GREEN;
+            finish.color = Color.RED;
             if (keyboardSensor.isPressed("enter")) {
                 skip = true;
             }
@@ -483,7 +532,7 @@ public class Maze {
 
             if (!skip) {
                 long startTime = System.currentTimeMillis();
-                drawMaze(gui, 320, 85, "To skip press enter", 40);
+                drawMaze(gui, 210, 85, "recover path: To skip press enter", 40);
                 long usedTime = System.currentTimeMillis() - startTime;
                 long milliSecondLeftToSleep = 40 - usedTime;
                 if (milliSecondLeftToSleep > 0) {
@@ -494,8 +543,8 @@ public class Maze {
         }
         // sleep to separate the enters.
         sleepFor(300);
-        drawMaze(gui, 320, 85, "To exit press enter", 40);
-        while (!keyboardSensor.isPressed("enter")) {
+        drawMaze(gui, 210, 85, "recover path: To exit press enter", 40);
+        while (!keyboardSensor.isPressed("enter") && shouldPrint) {
             sleepFor(100);
         }
     }
