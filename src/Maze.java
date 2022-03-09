@@ -102,9 +102,12 @@ public class Maze {
             DrawSurface drawSurface = gui.getDrawSurface();
             drawMaze(drawSurface);
             drawSurface.drawText(275, 85, "To start press enter" , 50);
-            gui.show(drawSurface);        }
+            gui.show(drawSurface);
+            sleeper.sleepFor(100);
+
+        }
         //to separate the enters
-        sleepFor(300);
+        sleeper.sleepFor(300);
         boolean skipDrawing = false;
 
         ArrayList<Cell> stack = new ArrayList<>();
