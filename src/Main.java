@@ -62,9 +62,9 @@ public class Main {
 
             if(allTheData[i].BFSVisit < allTheData[i].DFSVisit && allTheData[i].BFSVisit < allTheData[i].AStarVisit)
                 BFSWins++;
-            if (allTheData[i].DFSVisit < allTheData[i].AStarVisit && allTheData[i].DFSVisit < allTheData[i].AStarVisit)
+            else if (allTheData[i].DFSVisit < allTheData[i].AStarVisit && allTheData[i].DFSVisit < allTheData[i].BFSVisit)
                 DFSWins++;
-            if(allTheData[i].AStarVisit < allTheData[i].DFSVisit && allTheData[i].AStarVisit < allTheData[i].BFSVisit)
+            else if(allTheData[i].AStarVisit < allTheData[i].DFSVisit && allTheData[i].AStarVisit < allTheData[i].BFSVisit)
                 AStarWins++;
 
         }
