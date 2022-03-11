@@ -47,8 +47,8 @@ public class Main {
             Maze m = new Maze();
             m.shouldPrintMaze(false);
             m.recursiveBacktrack(gui);
-            m.setStartFromPoint(random.nextInt(Global.rows), random.nextInt(Global.cols));
-            m.setEndFromPoint(random.nextInt(Global.rows), random.nextInt(Global.cols));
+            //m.setStartFromPoint(random.nextInt(Global.rows), random.nextInt(Global.cols));
+            m.setEndFromPoint(50,50 );
 
             m.solveDFS(gui);
             allTheData[i].DFSVisit = m.howManyVisited();
