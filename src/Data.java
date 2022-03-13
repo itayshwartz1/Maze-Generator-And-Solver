@@ -1,5 +1,7 @@
 import java.util.Comparator;
 
+
+//this class store data about the runs of the maze. This class help me to compare the searches.
 public class Data implements Comparable<Data> {
     float pointDistance;
     float pathLength;
@@ -32,6 +34,4 @@ public class Data implements Comparable<Data> {
             return 0;
         return -1;
     }
-
-
 }

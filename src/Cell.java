@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Cell implements Comparable<Cell> {
+    //location on the arrayCell
     int i;
     int j;
 
+    //where on the screen the cell should be printed
     int realI;
     int realJ;
     int size;
@@ -23,17 +25,10 @@ public class Cell implements Comparable<Cell> {
     boolean visited = false;
     Cell father;
 
+    //for the A* search
     double g = Double.MAX_VALUE;
     double f = Double.MAX_VALUE;
 
-    /**
-     * This is the constructor of the Cell object.
-     *
-     * @param i
-     * @param j
-     * @param size
-     * @param color
-     */
     Cell(int i, int j, int size, Color color) {
         this.i = i;
         this.j = j;
@@ -45,12 +40,8 @@ public class Cell implements Comparable<Cell> {
         realJ = j * size + 135;
     }
 
-    /**
-     * This method draw the cell on a drawSurface without the walls.
-     *
-     * @param d - DrawSurface.
-     */
-    public void drawCell(DrawSurface d) {
+
+    public void drawCellWithoutWalls(DrawSurface d) {
         int realI = i * size + 20;
         int realJ = j * size + 135;
         // draw the cell with it color.
@@ -79,11 +70,7 @@ public class Cell implements Comparable<Cell> {
 
     /**
      * This method check if the location is inside the maze.
-     *
-     * @param i
-     * @param j
-     * @return - true or false
-     */
+    **/
     public Boolean isIndexValid(int i, int j) {
         if (i < 0 || j < 0 || i >= Global.rows || j >= Global.cols) {
             return false;
@@ -93,10 +80,7 @@ public class Cell implements Comparable<Cell> {
 
     /**
      * This method return random unvisited neighbor.
-     *
-     * @param array
-     * @return - random neighbors.
-     */
+    **/
     public Cell getRandomNeighborWallsDontMatters(Cell[][] array) {
         ArrayList<Cell> neighbors = new ArrayList<Cell>();
 
@@ -153,14 +137,15 @@ public class Cell implements Comparable<Cell> {
         return null;
     }
 
+    //for A*. th heuristic is the distance between the cell to the finish.
     public double calculateHeuristic(Cell target) {
         return Math.sqrt(Math.pow(this.i - target.i,2) + Math.pow(this.j - target.j,2));
     }
 
 
-    //need for the Astar search...
+    //need for the A* search
     @Override
-    public int compareTo(Cell n) {
-        return Double.compare(this.f, n.f);
+    public int compareTo(Cell other) {
+        return Double.compare(this.f, other.f);
     }
 }

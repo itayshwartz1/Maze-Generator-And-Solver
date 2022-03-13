@@ -1,6 +1,4 @@
-import biuoop.DrawSurface;
-import biuoop.GUI;
-import biuoop.KeyboardSensor;
+import biuoop.*;
 import java.awt.*;
 import java.util.*;
 
@@ -8,7 +6,7 @@ public class Maze {
     Cell[][] array = new Cell[Global.rows][Global.cols];
     Cell start;
     Cell finish;
-    Color background = new Color(255, 220, 199);
+    Color background = new Color(233, 199, 255);
     private Boolean shouldPrint = true;
 
 
@@ -82,7 +80,7 @@ public class Maze {
         d.fillRectangle(0, 0, Global.screenWidth, Global.screenHeight);
         for (int i = 0; i < Global.rows; i++) {
             for (int j = 0; j < Global.cols; j++) {
-                array[i][j].drawCell(d);
+                array[i][j].drawCellWithoutWalls(d);
             }
         }
         for (int i = 0; i < Global.rows; i++) {
@@ -415,7 +413,7 @@ public class Maze {
             if (!skip) {
                 drawMaze(gui, 280, 85, "DFS: To skip press enter", 40);
                 long usedTime = System.currentTimeMillis() - startTime;
-                long milliSecondLeftToSleep = 30 - usedTime;
+                long milliSecondLeftToSleep = 20 - usedTime;
                 if (milliSecondLeftToSleep > 0) {
                     sleepFor(milliSecondLeftToSleep);
                 }
@@ -481,7 +479,7 @@ public class Maze {
                 if (!skip) {
                     drawMaze(gui, 300, 85, "A*: To skip press enter", 40);
                     long usedTime = System.currentTimeMillis() - startTime;
-                    long milliSecondLeftToSleep = 40 - usedTime;
+                    long milliSecondLeftToSleep = 20 - usedTime;
                     if (milliSecondLeftToSleep > 0) {
                         sleepFor(milliSecondLeftToSleep);
                     }
@@ -510,9 +508,7 @@ public class Maze {
 
     /**
      * This method recover the path from the end to the start.
-     * it go from the end to his father and on until it reach to the start.
-     *
-     * @param gui
+     * it goes from the end to his father and on until it reach to the start.
      */
     private void recoverPath(GUI gui) {
         Cell current = finish;
