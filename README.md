@@ -22,7 +22,12 @@ I ran 10000 times creation of a maze with 10000 cells and solving by DFS, BFS an
 4. When the end point is in the center of the maze - it is not worth choosing BFS - that manages to "beat" its opponents in the number of visits at a rate of 11%! Therefore, you should choose DFS or A*. 
 5. Even in a relatively small maze (500 cells) the ratio between the searches is maintained (This can be seen in the attached second graph).
 
+You can find all the raw data in here:
+[10000 runs default start and finish.csv](https://github.com/itayshwartz1/Maze-Generator-And-Solver/files/9276630/10000.runs.default.start.and.finish.csv)
+[10000 runs finish in the middle.csv](https://github.com/itayshwartz1/Maze-Generator-And-Solver/files/9276631/10000.runs.finish.in.the.middle.csv)
+[10000 runs random start finish.csv](https://github.com/itayshwartz1/Maze-Generator-And-Solver/files/9276632/10000.runs.random.start.finish.csv)
 
+Visualisation of the data:
 ![1](https://user-images.githubusercontent.com/71848366/183287031-3d12b69a-e434-42fa-9fc0-3b542878b301.jpeg)
 
 ![2](https://user-images.githubusercontent.com/71848366/183287037-cd5a9663-5606-43b9-a525-9dee6bd21026.png)
@@ -30,3 +35,4 @@ I ran 10000 times creation of a maze with 10000 cells and solving by DFS, BFS an
 ![3](https://user-images.githubusercontent.com/71848366/183287041-88d7a8b5-bde4-4feb-8870-93736f94c871.jpeg)
 
 ![4](https://user-images.githubusercontent.com/71848366/183287042-d2a58859-c545-4e68-92f4-cdb12ab1c93a.png)
+
