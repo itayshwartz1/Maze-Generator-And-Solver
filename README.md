@@ -14,22 +14,6 @@ After thet you need to run the program via some IDE or CMD. The file that needs 
 ## Demonstration
 https://user-images.githubusercontent.com/71848366/183287045-acbef8cc-533d-4d3d-bb26-d6bb30032a67.mp4
 
-After you run the Project you see the start screen:
-![image](https://user-images.githubusercontent.com/71848366/183285833-b831ea9c-4163-48cc-a462-543fe58b71e2.png)
-Then you should press Enter key to start the creation of the maze (The maze is produced recursively):
-After the cration is over you can choos where the starting point and the end point will located:
-![image](https://user-images.githubusercontent.com/71848366/183285921-3025f53a-3a3a-4b7d-b8e3-47d96e0fb57d.png)
-Then the program will solve the maze with 3 algorithems:
-
-### DFS:
-![image](https://user-images.githubusercontent.com/71848366/183285958-4bd59aba-208b-43c9-829c-a02bdfbac3e1.png)
-
-### BFS:
-![image](https://user-images.githubusercontent.com/71848366/183285970-11d62b8e-ac1c-4e3f-b9e3-de3d7b05e901.png)
-
-### A*:
-![image](https://user-images.githubusercontent.com/71848366/183285994-1dcbfb97-9a55-477c-90bf-ba3d465c5368.png)
-
 ## Analysis
 I ran 10000 times creation of a maze with 10000 cells and solving by DFS, BFS and A*, with a random start and end point to get an accurate avarage of the data. and here are the results (all data appears at the end of the video) :
 1. When the end point is close to the start (in the quarter of the maze closest to you) you should choose BFS, that solves the maze quickly without a lot of unnecessary cell visits.
@@ -46,7 +30,3 @@ I ran 10000 times creation of a maze with 10000 cells and solving by DFS, BFS an
 ![3](https://user-images.githubusercontent.com/71848366/183287041-88d7a8b5-bde4-4feb-8870-93736f94c871.jpeg)
 
 ![4](https://user-images.githubusercontent.com/71848366/183287042-d2a58859-c545-4e68-92f4-cdb12ab1c93a.png)
-
-
-
-
