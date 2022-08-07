@@ -23,6 +23,7 @@ I ran 10000 times creation of a maze with 10000 cells and solving by DFS, BFS an
 5. Even in a relatively small maze (500 cells) the ratio between the searches is maintained (This can be seen in the attached second graph).
 
 You can find all the raw data in here:
+
 [10000 runs default start and finish.csv](https://github.com/itayshwartz1/Maze-Generator-And-Solver/files/9276630/10000.runs.default.start.and.finish.csv)
 
 [10000 runs finish in the middle.csv](https://github.com/itayshwartz1/Maze-Generator-And-Solver/files/9276631/10000.runs.finish.in.the.middle.csv)
