@@ -12,6 +12,8 @@ First you need to download this project to your choosen file.
 After thet you need to run the program via some IDE or CMD. The file that needs to be run is called Main.java and it is inside the src folder.
 
 ## Demonstration
+https://user-images.githubusercontent.com/71848366/183287045-acbef8cc-533d-4d3d-bb26-d6bb30032a67.mp4
+
 After you run the Project you see the start screen:
 ![image](https://user-images.githubusercontent.com/71848366/183285833-b831ea9c-4163-48cc-a462-543fe58b71e2.png)
 Then you should press Enter key to start the creation of the maze (The maze is produced recursively):
@@ -40,10 +42,11 @@ I ran 10000 times creation of a maze with 10000 cells and solving by DFS, BFS an
 ![1](https://user-images.githubusercontent.com/71848366/183287031-3d12b69a-e434-42fa-9fc0-3b542878b301.jpeg)
 
 ![2](https://user-images.githubusercontent.com/71848366/183287037-cd5a9663-5606-43b9-a525-9dee6bd21026.png)
+
 ![3](https://user-images.githubusercontent.com/71848366/183287041-88d7a8b5-bde4-4feb-8870-93736f94c871.jpeg)
+
 ![4](https://user-images.githubusercontent.com/71848366/183287042-d2a58859-c545-4e68-92f4-cdb12ab1c93a.png)
 
 
-https://user-images.githubusercontent.com/71848366/183287045-acbef8cc-533d-4d3d-bb26-d6bb30032a67.mp4
 
 
