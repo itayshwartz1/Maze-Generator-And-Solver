@@ -22,7 +22,10 @@ public class Cell implements Comparable<Cell> {
     boolean leftWall = true;
     boolean rightWall = true;
 
+    // this flag represents if the cell been visited by the try to find the end.
     boolean visited = false;
+
+    // Witch cell the search came from.
     Cell father;
 
     //for the A* search

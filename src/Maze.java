@@ -35,6 +35,8 @@ public class Maze {
         }
     }
 
+    // For statistic:
+
     public void shouldPrintMaze(Boolean b){
         this.shouldPrint = b;
     }
@@ -67,15 +69,13 @@ public class Maze {
     }
 
 
-    /**
-     * This method draw the maze on drawSurface.
-     **/
     public void drawMaze(GUI gui, int x, int y, String string, int fontSize) {
         if (!shouldPrint)
             return;
 
         DrawSurface d = gui.getDrawSurface();
         d.setColor(background);
+
         //draw the cells, and only after the walls - to prevent drawing cells on top the walls/
         d.fillRectangle(0, 0, Global.screenWidth, Global.screenHeight);
         for (int i = 0; i < Global.rows; i++) {
@@ -83,6 +83,7 @@ public class Maze {
                 array[i][j].drawCellWithoutWalls(d);
             }
         }
+        //print the walls after the cells, because the cell hides the walls
         for (int i = 0; i < Global.rows; i++) {
             for (int j = 0; j < Global.cols; j++) {
                 array[i][j].drawCellWalls(d);
@@ -137,6 +138,7 @@ public class Maze {
             Color realColor = current.color;
             current.color = Color.MAGENTA;
 
+            // Try to keep the speed of the cration on the same speed.
             if (!skipDrawing) {
                 drawMaze(gui, 275, 85, "To start press enter" , 50);
                 long usedTime = System.currentTimeMillis() - startTime;
@@ -193,6 +195,7 @@ public class Maze {
             next.upWall = false;
         }
     }
+    // For statistics:
 
     public void setStartFromPoint(int i, int j){
         if( i < 0 || i > Global.rows - 1 || j < 0 || j > Global.cols -1)
@@ -422,6 +425,25 @@ public class Maze {
         recoverPath(gui);
     }
 
+    /**
+     * Explanation
+     * Consider a square grid having many obstacles and we are given a starting cell and a target cell.
+     * We want to reach the target cell (if possible) from the starting cell as quickly as possible.
+     * Here A* Search Algorithm comes to the rescue.
+     * What A* Search Algorithm does is that at each step it picks the node according to a value-‘f’ which is a
+     * parameter equal to the sum of two other parameters – ‘g’ and ‘h’. At each step it picks the node/cell having
+     * the lowest ‘f’, and process that node/cell.
+     *
+     * We define ‘g’ and ‘h’ as simply as possible below
+     *
+     * g = the movement cost to move from the starting point to a given square on the grid,
+     * following the path generated to get there.
+     *
+     * h = the estimated movement cost to move from that given square on the grid to the final destination.
+     * This is often referred to as the heuristic, which is nothing but a kind of smart guess.
+     * We really don’t know the actual distance until we find the path, because all sorts of things can be in the
+     * way (walls, water, etc.). There can be many ways to calculate this ‘h’.
+     */
     public void solveAStar(GUI gui) {
         resetMaze();
         // sleep to separate the enters
@@ -429,15 +451,18 @@ public class Maze {
         KeyboardSensor keyboardSensor = gui.getKeyboardSensor();
         boolean skip = false;
 
-
         PriorityQueue<Cell> closedList = new PriorityQueue<>();
         PriorityQueue<Cell> openList = new PriorityQueue<>();
 
+        // we set the f value to become MAX_Value at first (start.g is MAX_VALUE, and the calculateHeuristic is
+        // the distance from start to end.
         start.f = start.g + (int) start.calculateHeuristic(finish);
         openList.add(start);
 
         while (!openList.isEmpty()) {
             start.color = Color.GREEN;
+
+            // Becouse its PriorityQueue we get the cell that its f is the smallest - the best cell for the algorithm.
             Cell current = openList.peek();
 
             current.visited = true;
@@ -448,14 +473,20 @@ public class Maze {
                 skip = true;
             }
 
+            // if we reach the end we finish.
             if (current == finish) {
                 recoverPath(gui);
                 return;
             }
 
+            // Take all the neighbors cell
             ArrayList<Cell> neighbors = createNeighbors(current);
 
-
+            // For each one of them we add 1 - the cost of the movement to them (add 1 to the distance from the start),
+            // while there is cells that we can go to them (not necessary neighbors) and we don't visit this cell
+            // already we calculate and change f and g and add it to the open list.
+            // Now ig the total distance from the start (g) is smaller than what the cell hold, we change it because
+            // it is cheaper to go to the end from our path. all of this loop is to update the values of the neighbors.
             for (Cell cell : neighbors) {
                 double totalWeight = current.g + 1;
 
@@ -476,6 +507,7 @@ public class Maze {
                         }
                     }
                 }
+
                 if (!skip) {
                     drawMaze(gui, 300, 85, "A*: To skip press enter", 40);
                     long usedTime = System.currentTimeMillis() - startTime;

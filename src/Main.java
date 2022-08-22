@@ -1,6 +1,4 @@
 import biuoop.*;
-import java.io.*;
-
 
 // global variables
 class Global {
